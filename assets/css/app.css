@@ -516,3 +516,10 @@ html {
       top: 0;
       left: -2400px;
   }
+
+  .searchbox
+  {
+    margin-right: 0;
+    margin-left: 0;
+  
+  }

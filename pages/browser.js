@@ -1,6 +1,57 @@
 import Layout from '../components/ProkinoLayout';
+import { withStyles } from '@material-ui/core/styles';
+import MuiExpansionPanel from '@material-ui/core/ExpansionPanel';
+import MuiExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
+import MuiExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
+import Typography from '@material-ui/core/Typography';
 
 export default function Browser() {
+    const ExpansionPanel = withStyles({
+        root: {
+          border: '1px solid rgba(0, 0, 0, .125)',
+          boxShadow: 'none',
+          '&:not(:last-child)': {
+            borderBottom: 0,
+          },
+          '&:before': {
+            display: 'none',
+          },
+          '&$expanded': {
+            margin: 'auto',
+          },
+        },
+        expanded: {},
+      })(MuiExpansionPanel);
+      
+      const ExpansionPanelSummary = withStyles({
+        root: {
+          backgroundColor: 'rgba(0, 0, 0, .03)',
+          borderBottom: '1px solid rgba(0, 0, 0, .125)',
+          marginBottom: -1,
+          minHeight: 56,
+          '&$expanded': {
+            minHeight: 56,
+          },
+        },
+        content: {
+          '&$expanded': {
+            margin: '12px 0',
+          },
+        },
+        expanded: {},
+      })(MuiExpansionPanelSummary);
+      
+      const ExpansionPanelDetails = withStyles(theme => ({
+        root: {
+          padding: theme.spacing(2),
+        },
+      }))(MuiExpansionPanelDetails);
+      
+        const [expanded, setExpanded] = React.useState('panel1');
+      
+        const handleChange = panel => (event, newExpanded) => {
+          setExpanded(newExpanded ? panel : false);
+        };
     return(
         <Layout>
             <br />
@@ -35,15 +86,14 @@ export default function Browser() {
   </div>
   </div>
 
-  <div className="container" style={{backgroundColor:'#e3f2fd'}}>
   	<div className="row justify-content-center">
       <div className="col-12 col-md-10 col-lg-8">
-          <form className="card card-sm">
+          <form>
             <br />
             <h4 className="align-center display-2">
               Look into classes, genes, diseases, or pathways:
             </h4>
-              <div className="card-body row no-gutters align-items-center">
+              <div className="card-body row searchbox align-items-center">
                   <div className="col-auto">
                       <i className="fas fa-search h4 text-body"></i>
                   </div>
@@ -72,8 +122,6 @@ export default function Browser() {
     {/* /.row */}
   <br />
   
-  </div>
-              <div className="container">
     <div className="container position-relative" id="content">
         <div className="row h-100 mt-5">
             <aside className="col-md-3 bg-light" id="left">
@@ -109,31 +157,40 @@ export default function Browser() {
             <main className="col py-5">
                 <div className="row position-relative">
                     <div className="col">
-                        <ul className="nav nav-tabs small" role="tablist">
-                            <li className="nav-item"><a className="nav-link text-uppercase active" data-toggle="tab" href="#tab1" role="tab">Home</a></li>
-                            <li className="nav-item ml-auto"><a className="nav-link text-uppercase" data-toggle="tab" href="#tab2" role="tab">List</a></li>
-                            <li className="nav-item"><a className="nav-link text-uppercase" data-toggle="tab" href="#tab3" role="tab">More</a></li>
-                        </ul>
-                        <div className="tab-content py-3 position-relative">
-                            <div className="tab-pane active position-relative" id="tab1" role="tabpanel">
-                                <h2 className="mb-3">EGFR</h2>
+                    <h2 className="mb-3">EGFR</h2>
+                    <ExpansionPanel square expanded={expanded === 'panel1'} onChange={handleChange('panel1')}>
+        <ExpansionPanelSummary aria-controls="panel1d-content" id="panel1d-header">
+          <Typography>General Information</Typography>
+        </ExpansionPanelSummary>
+        <ExpansionPanelDetails>
+        <Typography>
+     
 
-                                <div className="anchor" id="generalinfo"></div>
-                                <h5>General Information</h5>
-                                <p>Sriracha biodiesel taxidermy organic post-ironic, Intelligentsia salvia mustache 90's code editing brunch. Butcher polaroid VHS art party, hashtag Brooklyn deep v PBR narwhal sustainable mixtape swag wolf squid tote bag.
-                                    Tote bag cronut semiotics, raw denim deep v taxidermy messenger bag. Tofu YOLO Etsy, direct trade ethical Odd Future jean shorts paleo. Forage Shoreditch tousled aesthetic irony, street art organic Bushwick artisan
-                                    cliche semiotics ugh synth chillwave meditation. Shabby chic lomo plaid vinyl chambray Vice. Vice sustainable cardigan, Williamsburg master cleanse hella DIY 90's blog.</p>
+            <div className="anchor" id="generalinfo"></div>
+            <h5>General Information</h5>
+            <p>Sriracha biodiesel taxidermy organic post-ironic, Intelligentsia salvia mustache 90's code editing brunch. Butcher polaroid VHS art party, hashtag Brooklyn deep v PBR narwhal sustainable mixtape swag wolf squid tote bag.
+                Tote bag cronut semiotics, raw denim deep v taxidermy messenger bag. Tofu YOLO Etsy, direct trade ethical Odd Future jean shorts paleo. Forage Shoreditch tousled aesthetic irony, street art organic Bushwick artisan
+                cliche semiotics ugh synth chillwave meditation. Shabby chic lomo plaid vinyl chambray Vice. Vice sustainable cardigan, Williamsburg master cleanse hella DIY 90's blog.</p>
 
-                                <p>Ethical Kickstarter PBR asymmetrical lo-fi. Dreamcatcher street art Carles, stumptown gluten-free Kickstarter artisan Wes Anderson wolf pug. Godard sustainable you probably haven't heard of them, vegan farm-to-table Williamsburg
-                                    slow-carb readymade disrupt deep v. Meggings seitan Wes Anderson semiotics, cliche American Apparel whatever. Helvetica cray plaid, vegan brunch Banksy leggings +1 direct trade. Wayfarers codeply PBR selfies. Banh mi
-                                    McSweeney's Shoreditch selfies, forage fingerstache food truck occupy YOLO Pitchfork fixie iPhone fanny pack art party Portland.</p>
+            <p>Ethical Kickstarter PBR asymmetrical lo-fi. Dreamcatcher street art Carles, stumptown gluten-free Kickstarter artisan Wes Anderson wolf pug. Godard sustainable you probably haven't heard of them, vegan farm-to-table Williamsburg
+                slow-carb readymade disrupt deep v. Meggings seitan Wes Anderson semiotics, cliche American Apparel whatever. Helvetica cray plaid, vegan brunch Banksy leggings +1 direct trade. Wayfarers codeply PBR selfies. Banh mi
+                McSweeney's Shoreditch selfies, forage fingerstache food truck occupy YOLO Pitchfork fixie iPhone fanny pack art party Portland.</p>
 
-                                <p>Sriracha biodiesel taxidermy organic post-ironic, Intelligentsia salvia mustache 90's code editing brunch. Butcher polaroid VHS art party, hashtag Brooklyn deep v PBR narwhal sustainable mixtape swag wolf squid tote bag.
-                                    Tote bag cronut semiotics, raw denim deep v taxidermy messenger bag. Tofu YOLO Etsy, direct trade ethical Odd Future jean shorts paleo. Forage Shoreditch tousled aesthetic irony, street art organic Bushwick artisan
-                                    cliche semiotics ugh synth chillwave meditation. Shabby chic lomo plaid vinyl chambray Vice. Vice sustainable cardigan, Williamsburg master cleanse hella DIY 90's blog.</p>
+            <p>Sriracha biodiesel taxidermy organic post-ironic, Intelligentsia salvia mustache 90's code editing brunch. Butcher polaroid VHS art party, hashtag Brooklyn deep v PBR narwhal sustainable mixtape swag wolf squid tote bag.
+                Tote bag cronut semiotics, raw denim deep v taxidermy messenger bag. Tofu YOLO Etsy, direct trade ethical Odd Future jean shorts paleo. Forage Shoreditch tousled aesthetic irony, street art organic Bushwick artisan
+                cliche semiotics ugh synth chillwave meditation. Shabby chic lomo plaid vinyl chambray Vice. Vice sustainable cardigan, Williamsburg master cleanse hella DIY 90's blog.</p>
 
+                </Typography>
 
-                                <div className="anchor" id="pathways"></div>
+        </ExpansionPanelDetails>
+      </ExpansionPanel>
+      <ExpansionPanel square expanded={expanded === 'panel2'} onChange={handleChange('panel2')}>
+        <ExpansionPanelSummary aria-controls="panel2d-content" id="panel2d-header">
+          <Typography>Pathways</Typography>
+        </ExpansionPanelSummary>
+        <ExpansionPanelDetails>
+          <Typography>
+          <div className="anchor" id="pathways"></div>
                                 <h5>Pathways</h5>
                                 <p>Intelligentsia salvia mustache 90's code editing brunch. Butcher polaroid VHS art party, hashtag Brooklyn deep v PBR narwhal sustainable mixtape swag wolf squid tote bag. Tote bag cronut semiotics, raw denim deep v taxidermy
                                     messenger bag. Tofu YOLO Etsy, direct trade ethical Odd Future jean shorts paleo. Forage Shoreditch tousled aesthetic irony, street art organic Bushwick artisan cliche semiotics ugh synth chillwave meditation. Shabby
@@ -144,9 +201,16 @@ export default function Browser() {
                                     fingerstache food truck occupy YOLO Pitchfork fixie iPhone fanny pack art party Portland.</p>
 
 
-                                <hr />
-
-                                <div className="anchor" id="mutations"></div>
+          </Typography>
+        </ExpansionPanelDetails>
+      </ExpansionPanel>
+      <ExpansionPanel square expanded={expanded === 'panel3'} onChange={handleChange('panel3')}>
+        <ExpansionPanelSummary aria-controls="panel3d-content" id="panel3d-header">
+          <Typography>Mutations</Typography>
+        </ExpansionPanelSummary>
+        <ExpansionPanelDetails>
+          <Typography>
+          <div className="anchor" id="mutations"></div>
                                 <h5>Mutations</h5>
                                 <p>Ethical Kickstarter PBR asymmetrical lo-fi. Dreamcatcher street art Carles, stumptown gluten-free Kickstarter artisan Wes Anderson wolf pug. Godard sustainable you probably haven't heard of them, vegan farm-to-table Williamsburg
                                     slow-carb readymade disrupt deep v. Meggings seitan Wes Anderson semiotics, cliche American Apparel whatever. Helvetica cray plaid, vegan brunch Banksy leggings +1 direct trade. Wayfarers codeply PBR selfies. Banh mi
@@ -198,110 +262,50 @@ export default function Browser() {
 
 
                                 </div>
+          </Typography>
+        </ExpansionPanelDetails>
+      </ExpansionPanel>
+      <ExpansionPanel square expanded={expanded === 'panel4'} onChange={handleChange('panel4')}>
+        <ExpansionPanelSummary aria-controls="panel4d-content" id="panel4d-header">
+          <Typography>References</Typography>
+        </ExpansionPanelSummary>
+        <ExpansionPanelDetails>
+          <Typography>
+          <div className="anchor" id="references"></div>
+                <h5>References</h5>
+                <p>Ethical Kickstarter PBR asymmetrical lo-fi. Dreamcatcher street art Carles, stumptown gluten-free Kickstarter artisan Wes Anderson wolf pug. Godard sustainable you probably haven't heard of them, vegan farm-to-table Williamsburg
+                    slow-carb readymade disrupt deep v. Meggings seitan Wes Anderson semiotics, cliche American Apparel whatever. Helvetica cray plaid, vegan brunch Banksy leggings +1 direct trade. Wayfarers codeply PBR selfies. Banh mi
+                    McSweeney's Shoreditch selfies, forage fingerstache food truck occupy YOLO Pitchfork fixie iPhone fanny pack art party Portland.</p>
+                    
 
-                                <hr />
+                    <div className="pl-4">
+                        <div className="anchor" id="references_pubmed"></div>
+                        <h6>PubMed Refs</h6>
+                        <p>PBR narwhal sustainable mixtape swag wolf squid tote bag plus and them then Helvetica cray plaid, vegan brunch Banksy leggings +1 direct trade. Wayfarers codeply PBR selfies. Banh mi McSweeney's Shoreditch selfies,
+                            forage fingerstache food truck occupy YOLO Pitchfork fixie MDO of twitter fame iPhone fanny pack art party Portland. dd Future jean shorts paleo. Forage Shoreditch tousled aesthetic irony, street art organic Bushwick
+                            artisan cliche semiotics ugh synth chillwave meditation. Shabby chic lomo plaid vinyl chambray Vice. Vice sustainable cardigan!</p>
+                        <br />
 
-                                <div className="anchor" id="references"></div>
-                                <h5>References</h5>
-                                <p>Ethical Kickstarter PBR asymmetrical lo-fi. Dreamcatcher street art Carles, stumptown gluten-free Kickstarter artisan Wes Anderson wolf pug. Godard sustainable you probably haven't heard of them, vegan farm-to-table Williamsburg
-                                    slow-carb readymade disrupt deep v. Meggings seitan Wes Anderson semiotics, cliche American Apparel whatever. Helvetica cray plaid, vegan brunch Banksy leggings +1 direct trade. Wayfarers codeply PBR selfies. Banh mi
-                                    McSweeney's Shoreditch selfies, forage fingerstache food truck occupy YOLO Pitchfork fixie iPhone fanny pack art party Portland.</p>
-                                    
+                        <div className="anchor" id="references_uniprot"></div>
+                        <h6>UniProt Refs</h6>
+                        <p>PBR narwhal sustainable mixtape swag wolf squid tote bag plus and them then Helvetica cray plaid, vegan brunch Banksy leggings +1 direct trade. Wayfarers codeply PBR selfies. Banh mi McSweeney's Shoreditch selfies,
+                            forage fingerstache food truck occupy YOLO Pitchfork fixie MDO of twitter fame iPhone fanny pack art party Portland. dd Future jean shorts paleo. Forage Shoreditch tousled aesthetic irony, street art organic Bushwick
+                            artisan cliche semiotics ugh synth chillwave meditation. Shabby chic lomo plaid vinyl chambray Vice. Vice sustainable cardigan!</p>
+                        <br />
 
-                                    <div className="pl-4">
-                                      <div className="anchor" id="references_pubmed"></div>
-                                      <h6>PubMed Refs</h6>
-                                      <p>PBR narwhal sustainable mixtape swag wolf squid tote bag plus and them then Helvetica cray plaid, vegan brunch Banksy leggings +1 direct trade. Wayfarers codeply PBR selfies. Banh mi McSweeney's Shoreditch selfies,
-                                          forage fingerstache food truck occupy YOLO Pitchfork fixie MDO of twitter fame iPhone fanny pack art party Portland. dd Future jean shorts paleo. Forage Shoreditch tousled aesthetic irony, street art organic Bushwick
-                                          artisan cliche semiotics ugh synth chillwave meditation. Shabby chic lomo plaid vinyl chambray Vice. Vice sustainable cardigan!</p>
-                                      <br />
-  
-                                      <div className="anchor" id="references_uniprot"></div>
-                                      <h6>UniProt Refs</h6>
-                                      <p>PBR narwhal sustainable mixtape swag wolf squid tote bag plus and them then Helvetica cray plaid, vegan brunch Banksy leggings +1 direct trade. Wayfarers codeply PBR selfies. Banh mi McSweeney's Shoreditch selfies,
-                                          forage fingerstache food truck occupy YOLO Pitchfork fixie MDO of twitter fame iPhone fanny pack art party Portland. dd Future jean shorts paleo. Forage Shoreditch tousled aesthetic irony, street art organic Bushwick
-                                          artisan cliche semiotics ugh synth chillwave meditation. Shabby chic lomo plaid vinyl chambray Vice. Vice sustainable cardigan!</p>
-                                      <br />
-  
-                                      <div className="anchor" id="references_wiki"></div>
-                                      <h6>Wikipedia Refs</h6>
-                                      <p>PBR narwhal sustainable mixtape swag wolf squid tote bag plus and them then Helvetica cray plaid, vegan brunch Banksy leggings +1 direct trade. Wayfarers codeply PBR selfies. Banh mi McSweeney's Shoreditch selfies,
-                                          forage fingerstache food truck occupy YOLO Pitchfork fixie MDO of twitter fame iPhone fanny pack art party Portland. dd Future jean shorts paleo. Forage Shoreditch tousled aesthetic irony, street art organic Bushwick
-                                          artisan cliche semiotics ugh synth chillwave meditation. Shabby chic lomo plaid vinyl chambray Vice. Vice sustainable cardigan!</p>
-                                      <br />
-                                  </div>
-
-
-                            </div>
-                            <div className="tab-pane" id="tab2" role="tabpanel">
-                                <div className="card card-outline-primary mb-3">
-                                    <div className="card-block">
-                                        <h3 className="card-title">Primary</h3>
-                                        <p className="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                                        <a href="#" className="btn btn-outline-secondary">Outline</a>
-                                    </div>
-                                </div>
-                                <div className="card card-outline-primary mb-3">
-                                    <div className="card-block">
-                                        <h3 className="card-title">Primary</h3>
-                                        <p className="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                                        <a href="#" className="btn btn-outline-secondary">Outline</a>
-                                    </div>
-                                </div>
-                                <div className="card card-outline-primary mb-3">
-                                    <div className="card-block">
-                                        <h3 className="card-title">Primary</h3>
-                                        <p className="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                                        <a href="#" className="btn btn-outline-secondary">Outline</a>
-                                    </div>
-                                </div>
-                                <div className="card card-outline-primary mb-3">
-                                    <div className="card-block">
-                                        <h3 className="card-title">Primary</h3>
-                                        <p className="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                                        <a href="#" className="btn btn-outline-secondary">Outline</a>
-                                    </div>
-                                </div>
-                                <div className="card card-outline-primary mb-3">
-                                    <div className="card-block">
-                                        <h3 className="card-title">Primary</h3>
-                                        <p className="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                                        <a href="#" className="btn btn-outline-secondary">Outline</a>
-                                    </div>
-                                </div>
-                                <div className="card card-outline-primary mb-3">
-                                    <div className="card-block">
-                                        <h3 className="card-title">Primary</h3>
-                                        <p className="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                                        <a href="#" className="btn btn-outline-secondary">Outline</a>
-                                    </div>
-                                </div>
-                                <div className="card card-outline-primary mb-3">
-                                    <div className="card-block">
-                                        <h3 className="card-title">Primary</h3>
-                                        <p className="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                                        <a href="#" className="btn btn-outline-secondary">Outline</a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="tab-pane" id="tab3" role="tabpanel">
-                                <h4>More content...</h4>
-                                <p>Ethical Kickstarter PBR asymmetrical lo-fi. Dreamcatcher street art Carles, stumptown gluten-free Kickstarter artisan Wes Anderson wolf pug. Godard sustainable you probably haven't heard of them, vegan farm-to-table Williamsburg
-                                    slow-carb readymade disrupt deep v. Meggings seitan Wes Anderson semiotics, cliche American Apparel whatever. Helvetica cray plaid, vegan brunch Banksy leggings +1 direct trade. Wayfarers codeply PBR selfies. Banh mi
-                                    McSweeney's Shoreditch selfies, forage fingerstache food truck occupy YOLO Pitchfork fixie iPhone fanny pack art party Portland.</p>
-
-                                <p>Sriracha biodiesel taxidermy organic post-ironic, Intelligentsia salvia mustache 90's code editing brunch. Butcher polaroid VHS art party, hashtag Brooklyn deep v PBR narwhal sustainable mixtape swag wolf squid tote bag.
-                                    Tote bag cronut semiotics, raw denim deep v taxidermy messenger bag. Tofu YOLO Etsy, direct trade ethical Odd Future jean shorts paleo. Forage Shoreditch tousled aesthetic irony, street art organic Bushwick artisan
-                                    cliche semiotics ugh synth chillwave meditation. Shabby chic lomo plaid vinyl chambray Vice. Vice sustainable cardigan, Williamsburg master cleanse hella DIY 90's blog.</p>
-
-                                <p>Intelligentsia salvia mustache 90's code editing brunch. Butcher polaroid VHS art party, hashtag Brooklyn deep v PBR narwhal sustainable mixtape swag wolf squid tote bag. Tote bag cronut semiotics, raw denim deep v taxidermy
-                                    messenger bag. Tofu YOLO Etsy, direct trade ethical Odd Future jean shorts paleo. Forage Shoreditch tousled aesthetic irony, street art organic Bushwick artisan cliche semiotics ugh synth chillwave meditation. Shabby
-                                    chic lomo plaid vinyl chambray Vice. Vice sustainable cardigan, Williamsburg master cleanse hella DIY 90's blog.</p>
-
-                            </div>
+                        <div className="anchor" id="references_wiki"></div>
+                        <h6>Wikipedia Refs</h6>
+                        <p>PBR narwhal sustainable mixtape swag wolf squid tote bag plus and them then Helvetica cray plaid, vegan brunch Banksy leggings +1 direct trade. Wayfarers codeply PBR selfies. Banh mi McSweeney's Shoreditch selfies,
+                            forage fingerstache food truck occupy YOLO Pitchfork fixie MDO of twitter fame iPhone fanny pack art party Portland. dd Future jean shorts paleo. Forage Shoreditch tousled aesthetic irony, street art organic Bushwick
+                            artisan cliche semiotics ugh synth chillwave meditation. Shabby chic lomo plaid vinyl chambray Vice. Vice sustainable cardigan!</p>
+                        <br />
+                    </div>
+          </Typography>
+        </ExpansionPanelDetails>
+      </ExpansionPanel>
+             
                         </div>
                     </div>
-                </div>
             </main>
         </div>
     </div>
@@ -354,7 +358,7 @@ export default function Browser() {
             </div>
         </div>
     </div>
-</div>
+
 
         </Layout>)
 }
