@@ -74,7 +74,7 @@ html {
     line-height: 1;
     word-break: break-word;
     word-wrap: break-word; }
-  
+
   b, strong {
     font-weight: bold; }
   
@@ -92,7 +92,8 @@ html {
     display: none; }
   
   body {
-    position: relative; }
+    /* position: relative; */
+   }
   
   section {
     background-position: 50% 50%;

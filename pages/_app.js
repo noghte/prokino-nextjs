@@ -1,7 +1,9 @@
 import '../assets/css/app.css' //global
+import '../assets/css/protein.css' //protein
+import '../assets/css/favth-bootstrap.css' //bootstrap
 import 'bootstrap/dist/css/bootstrap.min.css' //global
 import '../assets/css/publications.css' // for publications.js
-import '../assets/css/mbr-additional.css' // for browser.js
+// import '../assets/css/mbr-additional.css' // for browser.js
 
 
 // This default export is required in a new `pages/_app.js` file.
