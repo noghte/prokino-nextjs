@@ -1,7 +1,9 @@
 import Layout from '../components/ProkinoLayout';
-import fetch from 'isomorphic-unfetch'
-import { useRouter } from 'next/router'
-import useSWR, {SWRConfig} from 'swr'
+import fetch from 'isomorphic-unfetch';
+import { useRouter } from 'next/router';
+import useSWR, {SWRConfig} from 'swr';
+import Link from 'next/link';
+
 // import Cors from 'micro-cors';
 // const cors = Cors({ allowMethods: ["GET", "HEAD"] });
 
@@ -13,7 +15,37 @@ const router = useRouter()
         <ProteinTemplate protein={router.query["p"]} />
     </SWRConfig>);
 }
-
+function showList(items, seperator = ", ")
+{
+    if (items)
+        return items.join(seperator);
+    return "";
+}
+function LinkList({values, seperator = ", "})
+{
+    let links = []
+    if (values)
+        {
+            const length = values[0]["v"].length;
+            for (let i=0;i<length;i++) //loop through pairs of values
+            {
+                let isLabel = i % 2 == 1; //odd literals are labels, and even literals are link values (for href attribtue)
+                if (isLabel)
+                {
+                    const label = values[0]["v"][i];
+                    const link = values[0]["v"][i-1];
+                    links.push(
+                        <Link key={i} href={'protein?p=' + link}>
+                            <a>{label}</a>
+                        </Link>
+                    );
+                    if (i<length-1) //don't add separator to the last item
+                        links.push(seperator); // seprate list of links
+                }
+            }
+        }
+    return links;
+}
 function ProteinTemplate({protein})
 {
     if (!protein)
@@ -29,22 +61,24 @@ function ProteinTemplate({protein})
     }
 
     let dataProps = {};
-    data.datatypeProperties.forEach(prop=>
-        dataProps[prop["p"]] = prop["v"]
-        );
+    if (data.datatypeProperties)
+        data.datatypeProperties.forEach(prop=>
+            dataProps[prop["p"]] = prop["v"]
+            );
 
     let objProps = {};
-    data.objectProperties.forEach(prop=>
-        objProps[prop["p"]] = prop["v"]
-        );
+    if (data.objectProperties)
+        data.objectProperties.forEach(prop=>
+            objProps[prop["p"]] = prop["v"]
+            );
 
     let incomingProps={}
-    data.incomingObjectProperties.forEach(prop=>
-        incomingProps[prop["p"]] = prop["v"]
-        );
+    if (data.incomingObjectProperties)
+        data.incomingObjectProperties.forEach(prop=>
+            incomingProps[prop["p"]] = prop["v"]
+            );
 
-    console.log(dataProps,objProps,incomingProps);
-    
+    console.log("dataProps", dataProps,"objProps",objProps,"incomingProps",incomingProps);
     
     return <DisplayProtein 
                 localName={data.localName.split(":")[1]} 
@@ -53,7 +87,7 @@ function ProteinTemplate({protein})
                 incomingObjectProperties={incomingProps}
                 />;
 }
-function DisplayProtein({localName,datatypeProperties,objectProperties,incomingObjectProperties})
+function DisplayProtein({localName, datatypeProperties,objectProperties,incomingObjectProperties})
 {
     return (<Layout>
         <div id="fav-container" className="fav-container">
@@ -112,7 +146,7 @@ function DisplayProtein({localName,datatypeProperties,objectProperties,incomingO
                                         <div className="favth-col-lg-2 favth-col-md-2 favth-col-sm-3 favth-col-xs-12 details-label"><span>Other Names</span></div>
                                         <div className="favth-col-lg-10 favth-col-md-10 favth-col-sm-9 favth-col-xs-12 details-field">
                                             <div>
-                                                {datatypeProperties["prokino:hasOtherName"].join(", ")}
+                                                {showList(datatypeProperties["prokino:hasOtherName"])}
                                              </div>
                                         </div>
                                     </div>
@@ -123,7 +157,7 @@ function DisplayProtein({localName,datatypeProperties,objectProperties,incomingO
                                         <div className="favth-col-lg-2 favth-col-md-2 favth-col-sm-3 favth-col-xs-12 details-label"><span>Cellular Location</span></div>
                                         <div className="favth-col-lg-10 favth-col-md-10 favth-col-sm-9 favth-col-xs-12 details-field">
                                             <div>
-                                            {datatypeProperties["prokino:hasCellularLocation"].join(", ")}
+                                            {showList(datatypeProperties["prokino:hasCellularLocation"])}
                                             </div>
                                         </div>
                                     </div>
@@ -163,7 +197,7 @@ function DisplayProtein({localName,datatypeProperties,objectProperties,incomingO
                                         <div className="favth-col-lg-2 favth-col-md-2 favth-col-sm-3 favth-col-xs-12 details-label">Present In</div>
                                         <div className="favth-col-lg-10 favth-col-md-10 favth-col-sm-9 favth-col-xs-12 details-field">
                                             <div>
-                                                <a href="http://vulcan.cs.uga.edu/prokino/resource/Human" target="_blank" title="show Human" >Human</a>
+                                                <LinkList values={objectProperties["prokino:presentIn"]} />
                                             </div>
                                         </div>
                                     </div>
@@ -172,10 +206,10 @@ function DisplayProtein({localName,datatypeProperties,objectProperties,incomingO
                                     <div className="favth-clearfix">
                                         <div className="favth-col-lg-2 favth-col-md-2 favth-col-sm-3 favth-col-xs-12 details-label">Also Present In</div>
                                         <div className="favth-col-lg-10 favth-col-md-10 favth-col-sm-9 favth-col-xs-12 details-field">
-                                            <div>
+                                            <div style={{"backgroundColor":"pink"}}>
                                                 <a href="http://vulcan.cs.uga.edu/prokino/resource/FruitFly_EGFR" target="_blank" title="show FruitFly_EGFR" >FruitFly</a>,
                                                 <a href="http://vulcan.cs.uga.edu/prokino/resource/SeaUrchin_EGFR" target="_blank" title="show SeaUrchin_EGFR" >SeaUrchin</a>,
-                                                <a href="http://vulcan.cs.uga.edu/prokino/resource/Mouse_EGFR" target="_blank" title="show Mouse_EGFR" >Mouse</a>
+                                                <a href="http://vulcan.cs.uga.edu/prokino/resource/Mouse_EGFR" target="_blank" title="show Mouse_EGFR" >Mouse</a> 
                                             </div>
                                         </div>
                                     </div>
@@ -184,7 +218,7 @@ function DisplayProtein({localName,datatypeProperties,objectProperties,incomingO
                                     <div className="favth-clearfix">
                                         <div className="favth-col-lg-2 favth-col-md-2 favth-col-sm-3 favth-col-xs-12 details-label">Classification</div>
                                         <div className="favth-col-lg-10 favth-col-md-10 favth-col-sm-9 favth-col-xs-12 details-field">
-                                            <div>
+                                        <div style={{"backgroundColor":"pink"}}>
                                                 <a href="http://vulcan.cs.uga.edu/prokino/resource/FruitFly_EGFR" target="_blank" title="show EGFR family" >EGFR family</a>,
                                                 <a href="http://vulcan.cs.uga.edu/prokino/resource/SeaUrchin_EGFR" target="_blank" title="show TK group" >TK group</a>
 
@@ -196,8 +230,9 @@ function DisplayProtein({localName,datatypeProperties,objectProperties,incomingO
                                     <div className="favth-clearfix">
                                         <div className="favth-col-lg-2 favth-col-md-2 favth-col-sm-3 favth-col-xs-12 details-label">Encodes Domains</div>
                                         <div className="favth-col-lg-10 favth-col-md-10 favth-col-sm-9 favth-col-xs-12 details-field">
-                                            <div>
-                                                <a href="http://vulcan.cs.uga.edu/prokino/resource/Human" target="_blank" title="show Human_EGFR-Domain" >Human_EGFR-Domain</a>
+                                        <div>
+                                        <LinkList values={incomingObjectProperties["prokino:encodedIn"]} />
+                                        
                                             </div>
                                         </div>
                                     </div>
@@ -207,10 +242,8 @@ function DisplayProtein({localName,datatypeProperties,objectProperties,incomingO
                                         <div className="favth-col-lg-2 favth-col-md-2 favth-col-sm-3 favth-col-xs-12 details-label">Functional Domains</div>
                                         <div className="favth-col-lg-10 favth-col-md-10 favth-col-sm-9 favth-col-xs-12 details-field">
                                             <div>
-                                                <a href="http://vulcan.cs.uga.edu/prokino/resource/Human" target="_blank" title="show Furin-like" >Furin-like</a>,
-                                                <a href="http://vulcan.cs.uga.edu/prokino/resource/Human" target="_blank" title="show GF_recep_IV" >GF_recep_IV</a>,
-                                                <a href="http://vulcan.cs.uga.edu/prokino/resource/Human" target="_blank" title="show Pkinase_Tyr" >Pkinase_Tyr</a>,
-                                                <a href="http://vulcan.cs.uga.edu/prokino/resource/Human" target="_blank" title="show Recep_L_domain" >Recep_L_domain</a>
+                                            <LinkList values={objectProperties["prokino:hasFunctionalDomain"]} />
+                                            
                                             </div>
                                         </div>
                                     </div>
@@ -220,13 +253,9 @@ function DisplayProtein({localName,datatypeProperties,objectProperties,incomingO
                                         <div className="favth-col-lg-2 favth-col-md-2 favth-col-sm-3 favth-col-xs-12 details-label">Sequence</div>
                                         <div className="favth-col-lg-10 favth-col-md-10 favth-col-sm-9 favth-col-xs-12 details-field">
                                             <div>
-                                                <a href="http://vulcan.cs.uga.edu/prokino/resource/Human" target="_blank" title="show Furin-like" >Human_EGFR-Cosmic_Seq</a>,
-                                                <a href="http://vulcan.cs.uga.edu/prokino/resource/Human" target="_blank" title="show Furin-like" > Human_EGFR-Isoform1_Seq</a>,
-                                                <a href="http://vulcan.cs.uga.edu/prokino/resource/Human" target="_blank" title="show Furin-like" > Human_EGFR-Isoform2_Seq</a>,
-                                                <a href="http://vulcan.cs.uga.edu/prokino/resource/Human" target="_blank" title="show Furin-like" > Human_EGFR-Isoform3_Seq</a>,
-                                                <a href="http://vulcan.cs.uga.edu/prokino/resource/Human" target="_blank" title="show Furin-like" > Human_EGFR-Isoform4_Seq</a>,
-                                                <a href="http://vulcan.cs.uga.edu/prokino/resource/Human" target="_blank" title="show Furin-like" > Human_EGFR-Kinbase_Seq</a>,
-                                                <a href="http://vulcan.cs.uga.edu/prokino/resource/Human" target="_blank" title="show Furin-like" > Human_EGFR-UniProt_Seq</a>
+                                            <LinkList values={objectProperties["prokino:hasSequence"]} />
+                                            
+                                            
                                             </div>
                                         </div>
                                     </div>
@@ -236,15 +265,7 @@ function DisplayProtein({localName,datatypeProperties,objectProperties,incomingO
                                         <div className="favth-col-lg-2 favth-col-md-2 favth-col-sm-3 favth-col-xs-12 details-label">Associated w/ Diseases</div>
                                         <div className="favth-col-lg-10 favth-col-md-10 favth-col-sm-9 favth-col-xs-12 details-field">
                                             <div>
-                                                <a href="https://www.rcsb.org/structure/42deyRJ8" target="_blank" title="show Associated Diseases"> Ewings_sarcoma-peripheral_primitive_neuroectodermal_tumour_NS</a>,
-                                                <a href="https://www.rcsb.org/structure/42deyRJ8" target="_blank" title="show Associated Diseases"> NS_NS</a>,
-                                                <a href="https://www.rcsb.org/structure/42deyRJ8" target="_blank" title="show Associated Diseases"> Wilms_tumour_NS</a>,
-                                                <a href="https://www.rcsb.org/structure/42deyRJ8" target="_blank" title="show Associated Diseases"> adenoma_NS</a>,
-                                                <a href="https://www.rcsb.org/structure/42deyRJ8" target="_blank" title="show Associated Diseases"> adenoma_tubular</a>,
-                                                <a href="https://www.rcsb.org/structure/42deyRJ8" target="_blank" title="show Associated Diseases"> adnexal_tumour_malignant_adnexal_tumour</a>,
-                                                <a href="https://www.rcsb.org/structure/42deyRJ8" target="_blank" title="show Associated Diseases"> adnexal_tumour_other</a>,
-                                                <a href="https://www.rcsb.org/structure/42deyRJ8" target="_blank" title="show Associated Diseases"> adnexal_tumour_sebaceous_adenoma</a>,
-                                                
+                                            <LinkList values={objectProperties["prokino:associatedWith"]} />
                                             </div>
                                         </div>
                                     </div>
