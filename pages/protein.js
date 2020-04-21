@@ -21,26 +21,33 @@ function showList(items, seperator = ", ")
         return items.join(seperator);
     return "";
 }
-function LinkList({values, seperator = ", "})
+function LinkList({values, targetvalue, seperator = ", "})
 {
     let links = []
+    console.log(targetvalue);
     if (values)
         {
-            const length = values[0]["v"].length;
-            for (let i=0;i<length;i++) //loop through pairs of values
+            //we should have a target value to get filtered values, if not, consider the first element as the main element
+            let entity = targetvalue ? values.find(el => el["c"] === targetvalue) : values[0];
+            
+            if (entity) 
             {
-                let isLabel = i % 2 == 1; //odd literals are labels, and even literals are link values (for href attribtue)
-                if (isLabel)
+                const length = entity["v"].length;
+                for (let i=0;i<length;i++) //loop through pairs of values
                 {
-                    const label = values[0]["v"][i];
-                    const link = values[0]["v"][i-1];
-                    links.push(
-                        <Link key={i} href={'protein?p=' + link}>
-                            <a>{label}</a>
-                        </Link>
-                    );
-                    if (i<length-1) //don't add separator to the last item
-                        links.push(seperator); // seprate list of links
+                    let isLabel = i % 2 == 1; //odd literals are labels, and even literals are link values (for href attribtue)
+                    if (isLabel)
+                    {
+                        const label = entity["v"][i];
+                        const link = entity["v"][i-1];
+                        links.push(
+                            <Link key={i} href={'protein?p=' + link}>
+                                <a>{label}</a>
+                            </Link>
+                        );
+                        if (i<length-1) //if it is not the last item (don't add separator to the last item)
+                            links.push(seperator); // add a seperator (e.g. a comma) to seprate list of links
+                    }
                 }
             }
         }
@@ -197,7 +204,7 @@ function DisplayProtein({localName, datatypeProperties,objectProperties,incoming
                                         <div className="favth-col-lg-2 favth-col-md-2 favth-col-sm-3 favth-col-xs-12 details-label">Present In</div>
                                         <div className="favth-col-lg-10 favth-col-md-10 favth-col-sm-9 favth-col-xs-12 details-field">
                                             <div>
-                                                <LinkList values={objectProperties["prokino:presentIn"]} />
+                                                <LinkList values={objectProperties["prokino:presentIn"]} targetvalue="prokino:Organism" />
                                             </div>
                                         </div>
                                     </div>
@@ -207,9 +214,7 @@ function DisplayProtein({localName, datatypeProperties,objectProperties,incoming
                                         <div className="favth-col-lg-2 favth-col-md-2 favth-col-sm-3 favth-col-xs-12 details-label">Also Present In</div>
                                         <div className="favth-col-lg-10 favth-col-md-10 favth-col-sm-9 favth-col-xs-12 details-field">
                                             <div style={{"backgroundColor":"pink"}}>
-                                                <a href="http://vulcan.cs.uga.edu/prokino/resource/FruitFly_EGFR" target="_blank" title="show FruitFly_EGFR" >FruitFly</a>,
-                                                <a href="http://vulcan.cs.uga.edu/prokino/resource/SeaUrchin_EGFR" target="_blank" title="show SeaUrchin_EGFR" >SeaUrchin</a>,
-                                                <a href="http://vulcan.cs.uga.edu/prokino/resource/Mouse_EGFR" target="_blank" title="show Mouse_EGFR" >Mouse</a> 
+                                                ?
                                             </div>
                                         </div>
                                     </div>
@@ -219,8 +224,7 @@ function DisplayProtein({localName, datatypeProperties,objectProperties,incoming
                                         <div className="favth-col-lg-2 favth-col-md-2 favth-col-sm-3 favth-col-xs-12 details-label">Classification</div>
                                         <div className="favth-col-lg-10 favth-col-md-10 favth-col-sm-9 favth-col-xs-12 details-field">
                                         <div style={{"backgroundColor":"pink"}}>
-                                                <a href="http://vulcan.cs.uga.edu/prokino/resource/FruitFly_EGFR" target="_blank" title="show EGFR family" >EGFR family</a>,
-                                                <a href="http://vulcan.cs.uga.edu/prokino/resource/SeaUrchin_EGFR" target="_blank" title="show TK group" >TK group</a>
+                                                ?
 
                                             </div>
                                         </div>
@@ -285,13 +289,7 @@ function DisplayProtein({localName, datatypeProperties,objectProperties,incoming
                                         <div className="favth-col-lg-2 favth-col-md-2 favth-col-sm-3 favth-col-xs-12 details-label"><span>Missense</span></div>
                                         <div className="favth-col-lg-10 favth-col-md-10 favth-col-sm-9 favth-col-xs-12 details-field">
                                             <div>
-                                                <a href="https://www.rcsb.org/structure/42eyRJ8" target="_blank" title="show"> p.R2Q</a>,
-                                                <a href="https://www.rcsb.org/structure/42eyRJ8" target="_blank" title="show"> p.G5A</a>,
-                                                <a href="https://www.rcsb.org/structure/42eyRJ8" target="_blank" title="show"> p.A13T</a>,
-                                                <a href="https://www.rcsb.org/structure/42eyRJ8" target="_blank" title="show"> p.A16T</a>,
-                                                <a href="https://www.rcsb.org/structure/42eyRJ8" target="_blank" title="show"> p.A17V</a>,
-                                                
-
+                                                <LinkList values={objectProperties["prokino:hasMutation"]} targetvalue={"prokino:Missense"} />
                                             </div>
                                         </div>
                                     </div>
@@ -301,12 +299,7 @@ function DisplayProtein({localName, datatypeProperties,objectProperties,incoming
                                         <div className="favth-col-lg-2 favth-col-md-2 favth-col-sm-3 favth-col-xs-12 details-label">Coding Silent</div>
                                         <div className="favth-col-lg-10 favth-col-md-10 favth-col-sm-9 favth-col-xs-12 details-field">
                                             <div>
-                                                <a href="https://www.rcsb.org/structure/42eyRJ8" target="_blank" title="show"> p.P20=</a>,
-                                                <a href="https://www.rcsb.org/structure/42eyRJ8" target="_blank" title="show"> p.A21=</a>,
-                                                <a href="https://www.rcsb.org/structure/42eyRJ8" target="_blank" title="show"> p.Q40=</a>,
-                                                <a href="https://www.rcsb.org/structure/42eyRJ8" target="_blank" title="show"> p.V60=</a>,
-                                                <a href="https://www.rcsb.org/structure/42eyRJ8" target="_blank" title="show"> p.V85=</a>,
-                                                
+                                            <LinkList values={objectProperties["prokino:hasMutation"]} targetvalue={"prokino:CodingSilent"} />
                                             </div>
                                         </div>
                                     </div>
@@ -316,13 +309,7 @@ function DisplayProtein({localName, datatypeProperties,objectProperties,incoming
                                         <div className="favth-col-lg-2 favth-col-md-2 favth-col-sm-3 favth-col-xs-12 details-label">Nonsense</div>
                                         <div className="favth-col-lg-10 favth-col-md-10 favth-col-sm-9 favth-col-xs-12 details-field">
                                             <div>
-                                                <a href="https://www.rcsb.org/structure/42eyRJ8" target="_blank" title="show"> p.Q71*</a>,
-                                                <a href="https://www.rcsb.org/structure/42eyRJ8" target="_blank" title="show"> p.W200*</a>,
-                                                <a href="https://www.rcsb.org/structure/42eyRJ8" target="_blank" title="show"> p.Q208*</a>,
-                                                <a href="https://www.rcsb.org/structure/42eyRJ8" target="_blank" title="show"> p.Q276*</a>,
-                                                <a href="https://www.rcsb.org/structure/42eyRJ8" target="_blank" title="show"> p.C307*</a>,
-                                                <a href="https://www.rcsb.org/structure/42eyRJ8" target="_blank" title="show"> p.E1193*</a>
-
+                                            <LinkList values={objectProperties["prokino:hasMutation"]} targetvalue="prokino:Nonsense" />
                                             </div>
                                         </div>
                                     </div>
@@ -336,10 +323,7 @@ function DisplayProtein({localName, datatypeProperties,objectProperties,incoming
                                         <div className="favth-col-lg-2 favth-col-md-2 favth-col-sm-3 favth-col-xs-12 details-label"><span>Insertion in Frame</span></div>
                                         <div className="favth-col-lg-10 favth-col-md-10 favth-col-sm-9 favth-col-xs-12 details-field">
                                             <div>
-                                                <a href="https://www.rcsb.org/structure/42eyRJ8" target="_blank" title="show"> p.768_770insRCD</a>,
-                                                <a href="https://www.rcsb.org/structure/42eyRJ8" target="_blank" title="show"> p.A763_Y764insFQEA</a>,
-                                                <a href="https://www.rcsb.org/structure/42eyRJ8" target="_blank" title="show"> p.A763_Y764insFQEA</a>,
-                                                <a href="https://www.rcsb.org/structure/42eyRJ8" target="_blank" title="show"> p.Y764_V765insHH</a>
+                                            <LinkList values={objectProperties["prokino:hasMutation"]} targetvalue="prokino:InsertionInframe" />
                                             </div>
                                         </div>
                                     </div>
@@ -349,15 +333,7 @@ function DisplayProtein({localName, datatypeProperties,objectProperties,incoming
                                         <div className="favth-col-lg-2 favth-col-md-2 favth-col-sm-3 favth-col-xs-12 details-label">Insertion Frameshift</div>
                                         <div className="favth-col-lg-10 favth-col-md-10 favth-col-sm-9 favth-col-xs-12 details-field">
                                             <div>
-                                                <a href="https://www.rcsb.org/structure/42eyRJ8" target="_blank" title="show"> p.A202Cfs*29</a>,
-                                                <a href="https://www.rcsb.org/structure/42eyRJ8" target="_blank" title="show"> p.A859Gfs*38</a>,
-                                                <a href="https://www.rcsb.org/structure/42eyRJ8" target="_blank" title="show"> p.D770Efs*61</a>,
-                                                <a href="https://www.rcsb.org/structure/42eyRJ8" target="_blank" title="show"> p.I715Dfs*14</a>,
-                                                <a href="https://www.rcsb.org/structure/42eyRJ8" target="_blank" title="show"> p.Q820Sfs*7</a>,
-                                                <a href="https://www.rcsb.org/structure/42eyRJ8" target="_blank" title="show"> p.R224Pfs*7</a>,
-                                                <a href="https://www.rcsb.org/structure/42eyRJ8" target="_blank" title="show"> p.S720Afs*29</a>,
-                                                <a href="https://www.rcsb.org/structure/42eyRJ8" target="_blank" title="show"> p.W817*</a>,
-                                                <a href="https://www.rcsb.org/structure/42eyRJ8" target="_blank" title="show"> p.Y801*</a>
+                                            <LinkList values={objectProperties["prokino:hasMutation"]} targetvalue="prokino:InsertionFrameshift" />
                                             </div>
                                         </div>
                                     </div>
@@ -371,12 +347,7 @@ function DisplayProtein({localName, datatypeProperties,objectProperties,incoming
                                         <div className="favth-col-lg-2 favth-col-md-2 favth-col-sm-3 favth-col-xs-12 details-label"><span>Deletion in Frame</span></div>
                                         <div className="favth-col-lg-10 favth-col-md-10 favth-col-sm-9 favth-col-xs-12 details-field">
                                             <div>
-                                                <a href="https://www.rcsb.org/structure/42eyRJ8" target="_blank" title="show"> p.729_761del?</a>,
-                                                <a href="https://www.rcsb.org/structure/42eyRJ8" target="_blank" title="show"> p.A750_E758del</a>,
-                                                <a href="https://www.rcsb.org/structure/42eyRJ8" target="_blank" title="show"> p.A750_E758del</a>,
-                                                <a href="https://www.rcsb.org/structure/42eyRJ8" target="_blank" title="show"> p.A750_K757del</a>,
-                                                <a href="https://www.rcsb.org/structure/42eyRJ8" target="_blank" title="show"> p.Y827_R832del</a>
-
+                                                <LinkList values={objectProperties["prokino:hasMutation"]} targetvalue="prokino:DeletionInframe" />
                                             </div>
                                         </div>
                                     </div>
@@ -386,8 +357,7 @@ function DisplayProtein({localName, datatypeProperties,objectProperties,incoming
                                         <div className="favth-col-lg-2 favth-col-md-2 favth-col-sm-3 favth-col-xs-12 details-label">Deletion Frameshift</div>
                                         <div className="favth-col-lg-10 favth-col-md-10 favth-col-sm-9 favth-col-xs-12 details-field">
                                             <div>
-                                                <a href="https://www.rcsb.org/structure/42eyRJ8" target="_blank" title="show"> p.A647Hfs*64</a>,
-                                                <a href="https://www.rcsb.org/structure/42eyRJ8" target="_blank" title="show"> p.Y69Mfs*11</a>
+                                                <LinkList values={objectProperties["prokino:hasMutation"]} targetvalue="prokino:DeletionFrameshift" />
                                             </div>
                                         </div>
                                     </div>
@@ -402,8 +372,7 @@ function DisplayProtein({localName, datatypeProperties,objectProperties,incoming
                                         <div className="favth-col-lg-2 favth-col-md-2 favth-col-sm-3 favth-col-xs-12 details-label"><span>Complex Insertion in Frame</span></div>
                                         <div className="favth-col-lg-10 favth-col-md-10 favth-col-sm-9 favth-col-xs-12 details-field">
                                             <div>
-                                                <a href="https://www.rcsb.org/structure/42eyRJ8" target="_blank" title="show"> p.747_752>S</a>,
-                                                <a href="https://www.rcsb.org/structure/42eyRJ8" target="_blank" title="show"> p.V774>HC</a>
+                                                <LinkList values={objectProperties["prokino:hasMutation"]} targetvalue="prokino:ComplexInsertionInframe" />
                                             </div>
                                         </div>
                                     </div>
@@ -413,10 +382,7 @@ function DisplayProtein({localName, datatypeProperties,objectProperties,incoming
                                         <div className="favth-col-lg-2 favth-col-md-2 favth-col-sm-3 favth-col-xs-12 details-label">Complex Deletion in Frame</div>
                                         <div className="favth-col-lg-10 favth-col-md-10 favth-col-sm-9 favth-col-xs-12 details-field">
                                             <div>
-                                                <a href="https://www.rcsb.org/structure/42eyRJ8" target="_blank" title="show"> p.A859_L883>V</a>,
-                                                <a href="https://www.rcsb.org/structure/42eyRJ8" target="_blank" title="show"> p.V30_R297>G</a>
-
-
+                                            <LinkList values={objectProperties["prokino:hasMutation"]} targetvalue="prokino:ComplexDeletionInframe" />
                                             </div>
                                         </div>
                                     </div>
@@ -426,11 +392,7 @@ function DisplayProtein({localName, datatypeProperties,objectProperties,incoming
                                         <div className="favth-col-lg-2 favth-col-md-2 favth-col-sm-3 favth-col-xs-12 details-label"><span>Complex Frameshift</span></div>
                                         <div className="favth-col-lg-10 favth-col-md-10 favth-col-sm-9 favth-col-xs-12 details-field">
                                             <div>
-                                                <a href="https://www.rcsb.org/structure/42eyRJ8" target="_blank" title="show"> p.D770Pfs*59</a>,
-                                                <a href="https://www.rcsb.org/structure/42eyRJ8" target="_blank" title="show"> p.E746Nfs*15</a>,
-                                                <a href="https://www.rcsb.org/structure/42eyRJ8" target="_blank" title="show"> p.L747Rfs*13</a>,
-                                                <a href="https://www.rcsb.org/structure/42eyRJ8" target="_blank" title="show"> p.Q32Hfs*46</a>,
-                                                <a href="https://www.rcsb.org/structure/42eyRJ8" target="_blank" title="show"> p.T751Sfs*4</a>
+                                                <LinkList values={objectProperties["prokino:hasMutation"]} targetvalue="prokino:ComplexFrameshift" />
                                             </div>
                                         </div>
                                     </div>
@@ -439,8 +401,8 @@ function DisplayProtein({localName, datatypeProperties,objectProperties,incoming
                                     <div className="favth-clearfix">
                                         <div className="favth-col-lg-2 favth-col-md-2 favth-col-sm-3 favth-col-xs-12 details-label">Compound Substitution</div>
                                         <div className="favth-col-lg-10 favth-col-md-10 favth-col-sm-9 favth-col-xs-12 details-field">
-                                            <div>
-
+                                        <div style={{"backgroundColor":"pink"}}>
+                                                ?
                                             </div>
                                         </div>
                                     </div>
@@ -453,8 +415,8 @@ function DisplayProtein({localName, datatypeProperties,objectProperties,incoming
                                     <div className="favth-clearfix">
                                         <div className="favth-col-lg-2 favth-col-md-2 favth-col-sm-3 favth-col-xs-12 details-label"><span>Fusion</span></div>
                                         <div className="favth-col-lg-10 favth-col-md-10 favth-col-sm-9 favth-col-xs-12 details-field">
-                                            <div>
-
+                                        <div style={{"backgroundColor":"pink"}}>
+                                                ?
                                             </div>
                                         </div>
                                     </div>
@@ -468,10 +430,7 @@ function DisplayProtein({localName, datatypeProperties,objectProperties,incoming
                                         <div className="favth-col-lg-2 favth-col-md-2 favth-col-sm-3 favth-col-xs-12 details-label"><span>Other Mutation</span></div>
                                         <div className="favth-col-lg-10 favth-col-md-10 favth-col-sm-9 favth-col-xs-12 details-field">
                                             <div>
-
-                                                <a href="https://www.rcsb.org/structure/4d2RJ8" target="_blank" title="show">p.L747Xfs*16</a>,
-                                                <a href="https://www.rcsb.org/structure/42dRJ8" target="_blank" title="show"> p.G719Xfs*29</a>,
-                                                <a href="https://www.rcsb.org/structure/42dRJ8" target="_blank" title="show"> p.K806fs*?</a>
+                                            <LinkList values={objectProperties["prokino:hasMutation"]} targetvalue="prokino:OtherMutation" />
                                             </div>
                                         </div>
                                     </div>
@@ -490,9 +449,7 @@ function DisplayProtein({localName, datatypeProperties,objectProperties,incoming
                                         <div className="favth-col-lg-2 favth-col-md-2 favth-col-sm-3 favth-col-xs-12 details-label"><span>Participates in Pathways</span></div>
                                         <div className="favth-col-lg-10 favth-col-md-10 favth-col-sm-9 favth-col-xs-12 details-field">
                                             <div>
-                                                <a href="https://www.rcsb.org/structure/42yRJ8" target="_blank" title="show">Cargo recognition for clathrin-mediated endocytosis</a><br />
-                                                <a href="https://www.rcsb.org/structure/42yRJ8" target="_blank" title="show">Transcriptional regulation by the AP-2 (TFAP2) family of transcription factors</a><br />
-                                                <a href="https://www.rcsb.org/structure/42yRJ8" target="_blank" title="show">Vesicle-mediated transport</a>
+                                            <LinkList values={objectProperties["prokino:participatesIn"]} targetvalue="prokino:Pathway" />
                                             </div>
                                         </div>
                                     </div>
@@ -501,10 +458,8 @@ function DisplayProtein({localName, datatypeProperties,objectProperties,incoming
                                     <div className="favth-clearfix">
                                         <div className="favth-col-lg-2 favth-col-md-2 favth-col-sm-3 favth-col-xs-12 details-label">Participates in Reactions</div>
                                         <div className="favth-col-lg-10 favth-col-md-10 favth-col-sm-9 favth-col-xs-12 details-field">
-                                            <div>
-                                                        <a href="https://www.rcsb.org/structure/42yRJ8" target="_blank" title="show">Activated ERBB2 binds PTK6 (BRK)</a><br />
-                                                        <a href="https://www.rcsb.org/structure/42yRJ8" target="_blank" title="show">Ubiquitination of stimulated EGFR (CBL)</a><br />
-                                                        <a href="https://www.rcsb.org/structure/42yRJ8" target="_blank" title="show">Ubiquitination of stimulated EGFR (CBL:GRB2)</a>
+                                        <div style={{"backgroundColor":"pink"}}>
+                {/* seperator br */} ?
                                             </div>
                                         </div>
                                     </div>
@@ -513,9 +468,8 @@ function DisplayProtein({localName, datatypeProperties,objectProperties,incoming
                                     <div className="favth-clearfix">
                                         <div className="favth-col-lg-2 favth-col-md-2 favth-col-sm-3 favth-col-xs-12 details-label">Element of</div>
                                         <div className="favth-col-lg-10 favth-col-md-10 favth-col-sm-9 favth-col-xs-12 details-field">
-                                            <div>
-                                                <a href="https://www.rcsb.org/structure/42yRJ8" target="_blank" title="show">Activator:PI3K [plasma membrane]</a><br />
-                                                <a href="https://www.rcsb.org/structure/42yRJ8" target="_blank" title="show">Active dimers of ligand-responsive EGFR mutants sensitive to non-covalent TKIs [plasma membrane]</a><br />
+                                        <div style={{"backgroundColor":"pink"}}>
+                                    {/* seperator br */} ?
                                             </div>
                                         </div>
                                     </div>
@@ -536,7 +490,7 @@ function DisplayProtein({localName, datatypeProperties,objectProperties,incoming
                         </div>
 
 														<div className="favth-clearfix">
-                                                            <fieldset className="fieldset-details">
+                                                            <fieldset className="fieldset-details" style={{"backgroundColor":"pink"}}>
                                                                 <legend>References</legend>
                                                                 <div className="fieldset-pair-container">
                                                                     <div className="favth-clearfix">
